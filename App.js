@@ -9,9 +9,11 @@ import {html,render} from 'lit-html';
 
 const template=({todos, selectedTodos}) => html`
 <form>
-  <label for="todo">Todo:</label><br>
-  <input type="text" id="todo" name="todo" placeholder="Todo"><br>
-  <input type="submit" value="Add Todo" id="submit"
+  <h1 class="p-5">Todo List</h1>
+  
+  <input type="text" id="todo" name="todo" placeholder="Todo">
+  <input
+    class="bg-blue-500 text-white font-bold py-2 px-4 rounded" type="submit" value="Add Todo" id="submit"
     @click=${ 
       e => {
       let id = self.crypto.randomUUID();
@@ -38,7 +40,8 @@ ${todos.map(todo => {
   </div>`
   } )
  }
- <input type="button" id="delete" value="delete"
+ 
+ <input ?hidden=${todoStore.todos.length == 0} class="bg-red-500 text-white font-bold py-2 px-4 rounded" type="button" id="delete" value="delete"
    @click=${ e => {
       let checkboxes = document.querySelectorAll("input[name=todoItem]");
       todoStore.deleteTodos([...checkboxes].filter(x=> x.checked).map(x=>x.id));
