@@ -8,12 +8,15 @@ import {html,render} from 'lit-html';
  */
 
 const template=({todos, selectedTodos}) => html`
+<div class="flex-1 p-3">
 <form>
-  <h1 class="p-5">Todo List</h1>
-  
-  <input type="text" id="todo" name="todo" placeholder="Todo">
+  <h1 class="p-5 text-4xl text-center">Todo List</h1>
+  <div>
+    <input type="text" id="todo" name="todo" placeholder="Todo">
+  </div>
+  <div>
   <input
-    class="bg-blue-500 text-white font-bold py-2 px-4 rounded" type="submit" value="Add Todo" id="submit"
+    class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded" type="submit" value="Add Todo" id="submit"
     @click=${ 
       e => {
       let id = self.crypto.randomUUID();
@@ -24,9 +27,11 @@ const template=({todos, selectedTodos}) => html`
     }
     }
     >
+  </div>
 </form>
 ${todos.map(todo => {
-  return html`<div> 
+  return html`
+  <div> 
     <input type="checkbox" id="${todo.id}" name="todoItem"
       @change=${ (e) => { 
       if(e.target.checked)
@@ -40,12 +45,14 @@ ${todos.map(todo => {
   </div>`
   } )
  }
- 
- <input ?hidden=${todoStore.todos.length == 0} class="bg-red-500 text-white font-bold py-2 px-4 rounded" type="button" id="delete" value="delete"
+<div> 
+ <input ?hidden=${todoStore.todos.length == 0} class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded" type="button" id="delete" value="delete"
    @click=${ e => {
       let checkboxes = document.querySelectorAll("input[name=todoItem]");
       todoStore.deleteTodos([...checkboxes].filter(x=> x.checked).map(x=>x.id));
    }}>
+</div>
+</div>
 `;
 
 class TodoStore {
