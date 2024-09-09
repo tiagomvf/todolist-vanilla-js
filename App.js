@@ -8,11 +8,11 @@ import {html,render} from 'lit-html';
  */
 
 const template=({todos, selectedTodos}) => html`
-<div class="flex-1 p-3">
+<div class="flex flex-col p-4 text-lg ">
 <form>
-  <h1 class="p-5 text-4xl text-center">Todo List</h1>
-  <div>
-    <input type="text" id="todo" name="todo" placeholder="Todo">
+  <h1 class="text-4xl text-center">Todo List</h1>
+  <div class="py-4">
+    <input class="px-2 type="text" id="todo" name="todo" placeholder="Task description"/>
   </div>
   <div>
   <input
@@ -29,22 +29,27 @@ const template=({todos, selectedTodos}) => html`
     >
   </div>
 </form>
+<div class="flex flex-col space-y-1 py-4 px-0">
 ${todos.map(todo => {
   return html`
-  <div> 
-    <input type="checkbox" id="${todo.id}" name="todoItem"
+  <div class="flex flex-row bg-gray-100 px-2 space-x-2">
+    <input
+      type="checkbox" id="${todo.id}" name="todoItem"
       @change=${ (e) => { 
       if(e.target.checked)
         todoStore.selectTodo(todo.id);
       else
         todoStore.deselectTodo(todo.id);
       }
-      }>
-    <label for="${todo.id}">${todo.description}</label>
-    </input>
-  </div>`
+      }/>
+    <label class="w-full" for="${todo.id}">
+    ${todo.description}
+    </label>
+</div>
+  `
   } )
  }
+</div>
 <div> 
  <input ?hidden=${todoStore.todos.length == 0} class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded" type="button" id="delete" value="delete"
    @click=${ e => {
@@ -74,7 +79,6 @@ class TodoStore {
    */
   addTodo(todo) {
     this.todos = [...this.todos, todo]
-    console.log(this.todos);
     let eventDict = {todos: this.todos, selectedTodos: this.selectedTodos}
     document.dispatchEvent(new CustomEvent("todosChanged", {detail: eventDict}))
   }
@@ -112,7 +116,6 @@ class App extends HTMLElement {
   }
 
   render({todos, selectedTodos}){
-    console.log("rendering", todos, selectedTodos);
     render(template({todos, selectedTodos}), this);
     this.querySelector("#delete").toggleAttribute("disabled", todos.length == 0);
     [...this.querySelectorAll("input[name=todoItem]")].forEach(x => {
@@ -122,12 +125,24 @@ class App extends HTMLElement {
         x.checked = false;
       }
     })
+
+    let btnSubmit = this.querySelector("#submit");
+    let todoInput = this.querySelector("#todo");
+    if(todoInput.value && todoInput.value.length > 0){
+        btnSubmit.classList.replace("bg-gray-200", "bg-blue-500");
+        btnSubmit.disabled = false;
+    }else{
+        btnSubmit.classList.replace("bg-blue-500", "bg-gray-200");
+        btnSubmit.disabled = true;
+    }
   }
 
   connectedCallback() {
     let {todos, selectedTodos} = todoStore;
     this.render({todos, selectedTodos});
     todoStore.addObserver((e) => this.render(e.detail));
+    document.querySelector("#todo").addEventListener("input", e => this.render({todos, selectedTodos}))
+    document.querySelector("#todo").addEventListener("change", e => this.render({todos, selectedTodos}))
   }
 }
   
