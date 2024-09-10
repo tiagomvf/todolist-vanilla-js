@@ -4,19 +4,15 @@ import {html,render} from 'lit-html';
  * @typedef Todo
  * @property {string} id
  * @property {string} description
- * @returns 
  */
 
 const template=({todos, selectedTodos}) => html`
-<div class="flex flex-col p-4 text-lg ">
-<form>
-  <h1 class="text-4xl text-center">Todo List</h1>
-  <div class="py-4">
-    <input class="px-2 type="text" id="todo" name="todo" placeholder="Task description"/>
-  </div>
-  <div>
+<div class="flex flex-col text-lg">
+<form class="space-y-2">
+  <h1 class="py-4 text-4xl text-center">Todo List</h1>
+  <input class="w-full p-1" type="text" id="todo" name="todo" placeholder="Task description"/>
   <input
-    class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded" type="submit" value="Add Todo" id="submit"
+    class="w-full bg-blue-500 text-white font-bold py-2 px-2 rounded" type="submit" value="Add Todo" id="submit"
     @click=${ 
       e => {
       let id = self.crypto.randomUUID();
@@ -26,13 +22,12 @@ const template=({todos, selectedTodos}) => html`
       e.preventDefault();
     }
     }
-    >
-  </div>
+    />
 </form>
-<div class="flex flex-col space-y-1 py-4 px-0">
+<div class="space-y-1 py-4 px-0">
 ${todos.map(todo => {
   return html`
-  <div class="flex flex-row bg-gray-100 px-2 space-x-2">
+  <div class="flex flex-row rounded bg-blue-100 px-2 space-x-2">
     <input
       type="checkbox" id="${todo.id}" name="todoItem"
       @change=${ (e) => { 
@@ -141,8 +136,9 @@ class App extends HTMLElement {
     let {todos, selectedTodos} = todoStore;
     this.render({todos, selectedTodos});
     todoStore.addObserver((e) => this.render(e.detail));
-    document.querySelector("#todo").addEventListener("input", e => this.render({todos, selectedTodos}))
-    document.querySelector("#todo").addEventListener("change", e => this.render({todos, selectedTodos}))
+    document.querySelector("#todo").addEventListener("input", e => this.render(todoStore))
+    document.querySelector("#todo").addEventListener("change", e => this.render(todoStore))
+
   }
 }
   
