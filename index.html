@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -7,23 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/css" src="style.css"></script>
     <script>
-      tailwind.config = {
-        darkMode: 'selector',
-        theme: {
-          extend: {
-            colors: {
-              clifford: '#da373d',
-            }
-          }
-        }
-      }
+      tailwind.config = { }
     </script>
       
-    <title>Vite App</title>
+    <title>Todo List</title>
   </head>
   <body >
-    <div id="app" class="flex flex-col items-center">
-    </div>
+    <div id="app"></div>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
