@@ -10,8 +10,5 @@
   },
   "devDependencies": {
     "vite": "^5.4.1"
-  },
-  "dependencies": {
-    "lit-html": "^3.2.0"
   }
 }
