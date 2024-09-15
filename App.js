@@ -17,8 +17,8 @@ const template=({todos, selectedTodos}) => html`
       e => {
       let id = self.crypto.randomUUID();
       var description = document.querySelector("#todo").value;
-      todoStore.addTodo({id, description});
       document.querySelector("#todo").value = "";
+      todoStore.addTodo({id, description});
       e.preventDefault();
     }
     }
@@ -138,7 +138,6 @@ class App extends HTMLElement {
     todoStore.addObserver((e) => this.render(e.detail));
     document.querySelector("#todo").addEventListener("input", e => this.render(todoStore))
     document.querySelector("#todo").addEventListener("change", e => this.render(todoStore))
-
   }
 }
   
