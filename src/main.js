@@ -1,4 +1,4 @@
-import App from './src/Todos.js';
+import App from './Todos.js';
 
 document.querySelector('#app').innerHTML = `
   <div class="flex flex-col items-center">
