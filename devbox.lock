@@ -1,6 +1,54 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "nodePackages.browser-sync@latest": {
+      "last_modified": "2024-09-10T15:01:03Z",
+      "resolved": "github:NixOS/nixpkgs/5ed627539ac84809c78b2dd6d26a5cebeb5ae269#nodePackages.browser-sync",
+      "source": "devbox-search",
+      "version": "3.0.2",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/dnf1ld7lh7vjkswbxz5wq9hs7likapnf-browser-sync-3.0.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/dnf1ld7lh7vjkswbxz5wq9hs7likapnf-browser-sync-3.0.2"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/sarwly2z2zf7g4v9laparsiqyn552bzy-browser-sync-3.0.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/sarwly2z2zf7g4v9laparsiqyn552bzy-browser-sync-3.0.2"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/msw5sa1ippp6l5d4mcbk3b8kc7mvc73w-browser-sync-3.0.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/msw5sa1ippp6l5d4mcbk3b8kc7mvc73w-browser-sync-3.0.2"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/zfh4szbqf4gj6rvn82h6p6dy5ar8pcxn-browser-sync-3.0.2",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/zfh4szbqf4gj6rvn82h6p6dy5ar8pcxn-browser-sync-3.0.2"
+        }
+      }
+    },
     "nodejs@20": {
       "last_modified": "2024-08-31T10:12:23Z",
       "plugin_version": "0.0.2",

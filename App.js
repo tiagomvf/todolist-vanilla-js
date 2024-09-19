@@ -8,117 +8,69 @@ import {html,render} from './lib/lit-html.js';
 
 const template=({todos, selectedTodos}) => html`
 <div class="flex flex-col text-lg">
-<form class="space-y-2">
-  <h1 class="py-4 text-4xl text-center">Todo List</h1>
-  <input class="w-full p-1" type="text" id="todo" name="todo" placeholder="Task description"/>
-  <input
-    class="w-full bg-blue-500 text-white font-bold py-2 px-2 rounded" type="submit" value="Add Todo" id="submit"
-    @click=${ 
-      e => {
-      let id = self.crypto.randomUUID();
-      var description = document.querySelector("#todo").value;
-      document.querySelector("#todo").value = "";
-      todoStore.addTodo({id, description});
-      e.preventDefault();
-    }
-    }
-    />
-</form>
-<div class="space-y-1 py-4 px-0">
-${todos.map(todo => {
-  return html`
-  <div class="flex flex-row rounded bg-blue-100 px-2 space-x-2">
-    <input
-      type="checkbox" id="${todo.id}" name="todoItem"
-      @change=${ (e) => { 
-      if(e.target.checked)
-        todoStore.selectTodo(todo.id);
-      else
-        todoStore.deselectTodo(todo.id);
-      }
-      }/>
-    <label class="w-full" for="${todo.id}">
-    ${todo.description}
-    </label>
-</div>
+  <form class="space-y-2">
+    <h1 class="py-4 text-4xl text-center">Todo List</h1>
+    <input class="w-full p-1" type="text" id="todo" name="todo" placeholder="Task description"/>
+    <input class="w-full bg-blue-500 text-white font-bold py-2 px-2 rounded" type="submit" value="Add Todo" id="submit" />
+  </form>
+  <div class="space-y-1 py-4 px-0">
+  ${todos.map((todo, index) => {
+    return html`
+    <div class="flex flex-row rounded bg-blue-100 px-2 space-x-2">
+      <input type="checkbox" id="todoItem-${index}" data-id=${todo.id} name="todoItem" />
+      <label class="w-full" for="todoItem-${index}">
+      ${todo.description}
+      </label>
+  </div>
   `
   } )
  }
 </div>
 <div> 
- <input ?hidden=${todoStore.todos.length == 0} class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded" type="button" id="delete" value="delete"
-   @click=${ e => {
-      let checkboxes = document.querySelectorAll("input[name=todoItem]");
-      todoStore.deleteTodos([...checkboxes].filter(x=> x.checked).map(x=>x.id));
-   }}>
-</div>
+ <input ?hidden=${todos.length == 0} class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded" type="button" id="delete" value="delete"/>
 </div>
 `;
 
-class TodoStore {
-  /**
+class App extends HTMLElement {
+
+  /** 
    * @type {Todo[]}
    */
-  todos = [];
-  /**
-   * @type {Todo[]};
+  #all = [];
+  /** 
+   * @type {Todo[]}
    */
-  selectedTodos = [];
-
-  addObserver = (callback) => {
-    document.addEventListener("todosChanged", callback)
-  }
-
-  /**
-   * @param {Todo} todo 
-   */
-  addTodo(todo) {
-    this.todos = [...this.todos, todo]
-    let eventDict = {todos: this.todos, selectedTodos: this.selectedTodos}
-    document.dispatchEvent(new CustomEvent("todosChanged", {detail: eventDict}))
-  }
-
-  /**
-   * @param {string} id
-   */
-  deleteTodos(ids) {
-    this.todos = this.todos.filter(x => !ids.includes(x.id));
-    this.selectedTodos = this.selectedTodos.filter(x=> this.todos.includes(x));
-    let eventDict = {todos: this.todos, selectedTodos: this.selectedTodos}
-    document.dispatchEvent(new CustomEvent("todosChanged", {detail: eventDict}))
-  }
-
-  selectTodo(id){
-    let todo = [...this.todos].find(x => x.id == id);
-    this.selectedTodos = [...this.selectedTodos, todo]
-    let eventDict = {todos: this.todos, selectedTodos: this.selectedTodos}
-    document.dispatchEvent(new CustomEvent("todosChanged", {detail: eventDict}))
-  }
-
-  deselectTodo(id){
-    this.selectedTodos = [...this.selectedTodos].filter(x => x.id != id)
-    let eventDict = {todos: this.todos, selectedTodos: this.selectedTodos}
-    document.dispatchEvent(new CustomEvent("todosChanged", {detail: eventDict}))
-  }
-}
-
-const todoStore = new TodoStore();
-
-class App extends HTMLElement {
+  #selected = [];
 
   constructor() {
     super();
   }
 
-  render({todos, selectedTodos}){
-    render(template({todos, selectedTodos}), this);
-    this.querySelector("#delete").toggleAttribute("disabled", todos.length == 0);
+  /**
+   * @param {Todo[]} list 
+   */
+  set todos(list) {
+    this.#all = [...list];
+    this.render();
+  }
+
+  addTodo(todo){
+    this.todos = [...this.#all, todo];
+  }
+
+  render(){
+    render(template({
+      todos: this.#all,
+      selectedTodos: this.#selected
+    }), this);
+    this.querySelector("#delete").toggleAttribute("disabled", this.#all.length == 0, true);
     [...this.querySelectorAll("input[name=todoItem]")].forEach(x => {
-      if([...selectedTodos].map(y=>y.id).includes(x.id)){
+      if([...this.#selected].map(y => y.id).includes(x.dataset.id)){
         x.checked = true;
       }else{
         x.checked = false;
       }
+      x.addEventListener("click", e => console.log(`clicou ${e.target.dataset.id}`));
     })
 
     let btnSubmit = this.querySelector("#submit");
@@ -133,11 +85,24 @@ class App extends HTMLElement {
   }
 
   connectedCallback() {
-    let {todos, selectedTodos} = todoStore;
-    this.render({todos, selectedTodos});
-    todoStore.addObserver((e) => this.render(e.detail));
-    document.querySelector("#todo").addEventListener("input", e => this.render(todoStore))
-    document.querySelector("#todo").addEventListener("change", e => this.render(todoStore))
+    this.render();
+    this.querySelector("#todo").addEventListener("input", e => this.render());
+    this.querySelector("#todo").addEventListener("change", e => this.render());
+    this.querySelector("#submit").addEventListener('click', _ => {
+      let id = self.crypto.randomUUID();
+      var description = this.querySelector("#todo").value;
+      this.querySelector("#todo").value = "";
+      this.addTodo({id, description});
+    }
+    );
+    
+    this.querySelector("#delete").addEventListener("click", _ => {
+      let checkboxes = this.querySelectorAll("input[type=checkbox][name=todoItem]:checked");
+      const ids = [...checkboxes].map(x=>x.dataset.id);
+      this.#all = this.#all.filter(x => !ids.includes(x.id));
+      this.#selected = this.#selected.filter(x => this.todos.includes(x));
+      this.render();
+    }); 
   }
 }
   
