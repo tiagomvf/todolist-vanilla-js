@@ -70,7 +70,6 @@ class App extends HTMLElement {
       }else{
         x.checked = false;
       }
-      x.addEventListener("click", e => console.log(`clicou ${e.target.dataset.id}`));
     })
 
     let btnSubmit = this.querySelector("#submit");
